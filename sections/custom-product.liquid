@@ -1,46 +1,64 @@
 {% comment %}
-  This is a customized version of the default main-product.liquid section
-  with AJAX Add to Cart and a success message
+  Customized main-product.liquid styled like Dawn, with AJAX Add to Cart and success message
 {% endcomment %}
 
 {% assign product_form_id = 'product-form-' | append: section.id %}
 
 <section id="MainProduct-{{ section.id }}" class="product" itemscope itemtype="http://schema.org/Product">
   <div class="page-width">
-    <div class="product__container grid">
-      <!-- Product Image -->
-      <div class="product__media">
+    <div class="grid product__grid">
+    
+      <!-- Product Images -->
+      <div class="grid__item product__media-wrapper">
         {% if product.featured_image %}
-          <img src="{{ product.featured_image | img_url: '800x' }}" alt="{{ product.title }}" itemprop="image">
+          <div class="product__media">
+            <img src="{{ product.featured_image | img_url: '800x' }}" alt="{{ product.title }}" itemprop="image" class="product__media-img">
+          </div>
         {% endif %}
       </div>
 
       <!-- Product Details -->
-      <div class="product__info">
-        <h1 itemprop="name">{{ product.title }}</h1>
+      <div class="grid__item product__info-wrapper">
+        <div class="product__info">
+          <h1 class="product__title" itemprop="name">{{ product.title }}</h1>
 
-        <div class="product__price" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
-          <meta itemprop="priceCurrency" content="{{ cart.currency.iso_code }}">
-          <span itemprop="price">{{ product.price | money }}</span>
-        </div>
+          <div class="product__price" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+            <meta itemprop="priceCurrency" content="{{ cart.currency.iso_code }}">
+            <span class="price" itemprop="price">{{ product.price | money }}</span>
+          </div>
 
-        <div class="product__description" itemprop="description">
-          {{ product.description }}
-        </div>
+          <div class="product__description rte" itemprop="description">
+            {{ product.description }}
+          </div>
 
-        <!-- AJAX Add to Cart Form -->
-        <form id="{{ product_form_id }}" class="product-form" method="post">
-          <input type="hidden" name="id" value="{{ product.variants.first.id }}">
+          <!-- Add to Cart Form -->
+          <form id="{{ product_form_id }}" class="product-form" method="post">
+            <input type="hidden" name="id" value="{{ product.variants.first.id }}">
 
-          <label for="Quantity-{{ section.id }}">Quantity:</label>
-          <input type="number" id="Quantity-{{ section.id }}" name="quantity" min="1" value="1" required>
+            <label for="Quantity-{{ section.id }}" class="product__quantity-label">Quantity</label>
+            <input
+              type="number"
+              id="Quantity-{{ section.id }}"
+              name="quantity"
+              min="1"
+              value="1"
+              class="product__quantity"
+              required
+            >
 
-          <button type="submit" class="btn">Add to Cart</button>
-        </form>
+            <button type="submit" class="button button--primary">Add to Cart</button>
+          </form>
 
-        <!-- Success Message -->
-        <div id="CartSuccessMessage" class="cart-success-message" role="status" aria-live="polite" style="display: none;">
-          ✅ Item added successfully!
+          <!-- Success Message -->
+          <div
+            id="CartSuccessMessage"
+            class="cart-success-message"
+            role="status"
+            aria-live="polite"
+            style="display: none;"
+          >
+            ✅ Item added successfully!
+          </div>
         </div>
       </div>
     </div>
@@ -48,46 +66,56 @@
 </section>
 
 <style>
-  .product__container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 2rem;
-    padding: 2rem 0;
-  }
-
-  .product__media img {
+  .product__media-img {
     max-width: 100%;
     height: auto;
+    border-radius: 8px;
     border: 1px solid #e1e1e1;
-    border-radius: 6px;
   }
 
-  .product__info {
-    flex: 1;
-    min-width: 300px;
+  .product__title {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
   }
 
   .product__price {
     font-size: 1.5rem;
-    margin: 1rem 0;
-    color: #333;
+    color: #222;
+    margin-bottom: 1rem;
   }
 
   .product__description {
     margin-bottom: 1.5rem;
+    color: #555;
   }
 
-  .btn {
+  .product__quantity-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+  }
+
+  .product__quantity {
+    width: 60px;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+  }
+
+  .button {
     background-color: #000;
     color: #fff;
     padding: 12px 24px;
-    font-size: 1rem;
     border: none;
     cursor: pointer;
     border-radius: 4px;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
   }
 
-  .btn:hover {
+  .button:hover {
     background-color: #333;
   }
 
@@ -100,6 +128,12 @@
     font-weight: bold;
     font-size: 1rem;
     display: none;
+  }
+
+  @media screen and (max-width: 749px) {
+    .grid.product__grid {
+      grid-template-columns: 1fr;
+    }
   }
 </style>
 
