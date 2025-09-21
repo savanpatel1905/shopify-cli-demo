@@ -15,10 +15,10 @@
 <section class="product" itemscope itemtype="http://schema.org/Product">
   <div class="product-wrapper">
     <!-- Image -->
+      </div>
     {% if product.featured_image %}
       <div class="product-image">
         <img src="{{ product.featured_image | img_url: 'large' }}" alt="{{ product.title }}" itemprop="image">
-      </div>
     {% endif %}
 
     <!-- Details -->
