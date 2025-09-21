@@ -146,7 +146,7 @@
   }
 </style>
 
-<script>
+ <script>
   document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('{{ product_form_id }}');
     const successMessage = document.getElementById('CartSuccessMessage');
@@ -173,14 +173,14 @@
           // ✅ Fetch latest cart
           const cart = await fetch('/cart.js').then(res => res.json());
 
-          // ✅ Update cart bubble in header
-          const cartCount = document.querySelector('sup');
+          // ✅ Update cart count
+          const cartCount = document.querySelector('.cart-count'); // ← Update this selector
           if (cartCount) {
             cartCount.textContent = cart.item_count;
             cartCount.style.display = cart.item_count > 0 ? 'inline-block' : 'none';
           }
 
-          // ✅ Auto-hide success message
+          // ✅ Hide message after 3 seconds
           setTimeout(() => {
             successMessage.style.display = 'none';
           }, 3000);
