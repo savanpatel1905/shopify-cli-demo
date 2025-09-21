@@ -1,98 +1,114 @@
-{% schema %}
-{
-  "name": "Custom Product Section",
-  "tag": "section",
-  "class": "custom-product",
-  "settings": [],
-  "presets": [
-    {
-      "name": "Custom Product"
-    }
-  ]
-}
-{% endschema %}
+{% comment %}
+  This is a customized version of the default main-product.liquid section
+  with AJAX Add to Cart and a success message
+{% endcomment %}
 
-<section class="product" itemscope itemtype="http://schema.org/Product">
-  <div class="product-wrapper">
-    <!-- Image -->
-      </div>
-    {% if product.featured_image %}
-      <div class="product-image">
-        <img src="{{ product.featured_image | img_url: 'large' }}" alt="{{ product.title }}" itemprop="image">
-    {% endif %}
+{% assign product_form_id = 'product-form-' | append: section.id %}
 
-    <!-- Details -->
-    <div class="product-info">
-      <h1 itemprop="name">{{ product.title }}</h1>
-
-      <div class="product-price" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
-        <meta itemprop="priceCurrency" content="{{ cart.currency.iso_code }}">
-        <span itemprop="price">{{ product.price | money }}</span>
+<section id="MainProduct-{{ section.id }}" class="product" itemscope itemtype="http://schema.org/Product">
+  <div class="page-width">
+    <div class="product__container grid">
+      <!-- Product Image -->
+      <div class="product__media">
+        {% if product.featured_image %}
+          <img src="{{ product.featured_image | img_url: '800x' }}" alt="{{ product.title }}" itemprop="image">
+        {% endif %}
       </div>
 
-      <div class="product-description" itemprop="description">
-        {{ product.description }}
-      </div>
+      <!-- Product Details -->
+      <div class="product__info">
+        <h1 itemprop="name">{{ product.title }}</h1>
 
-      <!-- Add to Cart -->
-      <form id="add-to-cart-form" class="product-form" method="post">
-        <input type="hidden" name="id" value="{{ product.variants.first.id }}">
+        <div class="product__price" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+          <meta itemprop="priceCurrency" content="{{ cart.currency.iso_code }}">
+          <span itemprop="price">{{ product.price | money }}</span>
+        </div>
 
-        <label for="quantity">Quantity:</label>
-        <input type="number" id="quantity" name="quantity" min="1" value="1" required aria-label="Quantity">
+        <div class="product__description" itemprop="description">
+          {{ product.description }}
+        </div>
 
-        <button type="submit" class="btn">Add to Cart</button>
+        <!-- AJAX Add to Cart Form -->
+        <form id="{{ product_form_id }}" class="product-form" method="post">
+          <input type="hidden" name="id" value="{{ product.variants.first.id }}">
 
-        <div id="cart-success-message" class="cart-message" role="status" aria-live="polite" style="display: none;">
+          <label for="Quantity-{{ section.id }}">Quantity:</label>
+          <input type="number" id="Quantity-{{ section.id }}" name="quantity" min="1" value="1" required>
+
+          <button type="submit" class="btn">Add to Cart</button>
+        </form>
+
+        <!-- Success Message -->
+        <div id="CartSuccessMessage" class="cart-success-message" role="status" aria-live="polite" style="display: none;">
           ✅ Item added successfully!
         </div>
-      </form>
+      </div>
     </div>
   </div>
 </section>
 
 <style>
-  .product-wrapper {
+  .product__container {
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
     gap: 2rem;
-    padding: 2rem;
+    padding: 2rem 0;
   }
 
-  .product-image img {
+  .product__media img {
     max-width: 100%;
     height: auto;
+    border: 1px solid #e1e1e1;
+    border-radius: 6px;
   }
 
-  .product-info h1 {
-    font-size: 2rem;
-    margin-bottom: 1rem;
+  .product__info {
+    flex: 1;
+    min-width: 300px;
   }
 
-  .product-form {
-    margin-top: 1.5rem;
+  .product__price {
+    font-size: 1.5rem;
+    margin: 1rem 0;
+    color: #333;
   }
 
-  .cart-message {
-    color: green;
+  .product__description {
+    margin-bottom: 1.5rem;
+  }
+
+  .btn {
+    background-color: #000;
+    color: #fff;
+    padding: 12px 24px;
+    font-size: 1rem;
+    border: none;
+    cursor: pointer;
+    border-radius: 4px;
+  }
+
+  .btn:hover {
+    background-color: #333;
+  }
+
+  .cart-success-message {
     margin-top: 1rem;
+    padding: 1rem;
+    background-color: #e6ffe6;
+    color: #007a1c;
+    border-left: 4px solid #00a32a;
     font-weight: bold;
-  }
-
-  @media (min-width: 768px) {
-    .product-wrapper {
-      flex-direction: row;
-    }
-    .product-image, .product-info {
-      flex: 1;
-    }
+    font-size: 1rem;
+    display: none;
   }
 </style>
 
 <script>
   document.addEventListener('DOMContentLoaded', () => {
-    const form = document.getElementById('add-to-cart-form');
-    const message = document.getElementById('cart-success-message');
+    const form = document.getElementById('{{ product_form_id }}');
+    const successMessage = document.getElementById('CartSuccessMessage');
+
+    if (!form || !successMessage) return;
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -102,22 +118,37 @@
       try {
         const response = await fetch('/cart/add.js', {
           method: 'POST',
-          body: formData,
           headers: {
             'Accept': 'application/json',
           },
+          body: formData,
         });
 
-        if (!response.ok) throw new Error('Add to cart failed');
-
-        message.style.display = 'block';
-        setTimeout(() => {
-          message.style.display = 'none';
-        }, 3000);
-      } catch (err) {
-        alert('Something went wrong. Try again.');
-        console.error(err);
+        if (response.ok) {
+          successMessage.style.display = 'block';
+          setTimeout(() => {
+            successMessage.style.display = 'none';
+          }, 3000);
+        } else {
+          alert('Could not add item to cart.');
+        }
+      } catch (error) {
+        console.error('AJAX Add to Cart error:', error);
       }
     });
   });
 </script>
+
+{% schema %}
+{
+  "name": "Main Product",
+  "tag": "section",
+  "class": "section",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Product"
+    }
+  ]
+}
+{% endschema %}
