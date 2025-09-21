@@ -32,30 +32,33 @@
           </div>
 
           <!-- Add to Cart Form -->
-   <form
-  id="{{ product_form_id }}"
-  class="product-form"
-  method="post"
-  novalidate
-  onsubmit="return false;"
->
-  <input type="hidden" name="id" value="{{ product.variants.first.id }}">
-  
-  <label for="Quantity-{{ section.id }}">Quantity:</label>
-  <input type="number" id="Quantity-{{ section.id }}" name="quantity" min="1" value="1" required>
+          <form id="{{ product_form_id }}" class="product-form" method="post">
+            <input type="hidden" name="id" value="{{ product.variants.first.id }}">
 
-  <button type="submit" class="button button--primary">Add to Cart</button>
-</form>
+            <label for="Quantity-{{ section.id }}" class="product__quantity-label">Quantity</label>
+            <input
+              type="number"
+              id="Quantity-{{ section.id }}"
+              name="quantity"
+              min="1"
+              value="1"
+              class="product__quantity"
+              required
+            >
 
-<div
-  id="CartSuccessMessage"
-  class="cart-success-message"
-  role="status"
-  aria-live="polite"
-  style="display: none;"
->
-  ✅ Item added successfully!
-</div>
+            <button type="submit" class="button button--primary">Add to Cart</button>
+          </form>
+
+          <!-- Success Message -->
+          <div
+            id="CartSuccessMessage"
+            class="cart-success-message"
+            role="status"
+            aria-live="polite"
+            style="display: none;"
+          >
+            ✅ Item added successfully!
+          </div>
         </div>
       </div>
     </div>
@@ -165,27 +168,19 @@
         });
 
         if (response.ok) {
-          // Reset quantity (optional)
-          form.querySelector('[name="quantity"]').value = 1;
-
-          // Show success message
           successMessage.style.display = 'block';
-
-          // Hide after 3 seconds
           setTimeout(() => {
             successMessage.style.display = 'none';
           }, 3000);
         } else {
-          alert('Failed to add item.');
+          alert('Could not add item to cart.');
         }
-      } catch (err) {
-        console.error('AJAX error:', err);
-        alert('Error adding to cart.');
+      } catch (error) {
+        console.error('AJAX Add to Cart error:', error);
       }
     });
   });
 </script>
-
 
 {% schema %}
 {
