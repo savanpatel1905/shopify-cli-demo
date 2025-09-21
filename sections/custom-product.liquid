@@ -168,31 +168,34 @@
         });
 
         if (response.ok) {
+          console.log('✅ Product added to cart via AJAX.');
+
           successMessage.style.display = 'block';
 
-          // ✅ Fetch latest cart
+          // Get latest cart
           const cart = await fetch('/cart.js').then(res => res.json());
 
-          // ✅ Update cart count
-          const cartCount = document.querySelector('.cart-count'); // ← Update this selector
+          // Update cart count
+          const cartCount = document.querySelector('.cart-count'); // update selector as needed
           if (cartCount) {
             cartCount.textContent = cart.item_count;
             cartCount.style.display = cart.item_count > 0 ? 'inline-block' : 'none';
           }
 
-          // ✅ Hide message after 3 seconds
+          // Hide message after 3 seconds
           setTimeout(() => {
             successMessage.style.display = 'none';
           }, 3000);
         } else {
-          alert('Could not add item to cart.');
+          console.error('❌ Failed to add item to cart. Status:', response.status);
         }
       } catch (error) {
-        console.error('AJAX Add to Cart error:', error);
+        console.error('❌ AJAX error:', error);
       }
     });
   });
 </script>
+
 
 
 {% schema %}
