@@ -170,27 +170,23 @@
         if (response.ok) {
           console.log('✅ Product added to cart via AJAX.');
 
+          // Show success message
           successMessage.style.display = 'block';
 
           // Get latest cart
           const cart = await fetch('/cart.js').then(res => res.json());
 
           // Update cart count
-         const cartCount = document.querySelector('.cart-count'); // update selector as needed
+          const cartCount = document.querySelector('.cart-count'); // update this if needed
+          if (cartCount) {
+            cartCount.textContent = cart.item_count;
+            cartCount.style.display = 'inline-block'; // always show, no condition
+            console.log(`🛒 Cart count updated: ${cart.item_count}`);
+          } else {
+            console.warn('⚠️ .cart-count element not found in DOM.');
+          }
 
-if (cartCount) {
-  cartCount.textContent = cart.item_count;
-  cartCount.style.display = cart.item_count > 0 ? 'inline-block' : 'none';
-
-  // ✅ Log success
-  console.log(`🛒 Cart count updated: ${cart.item_count}`);
-} else {
-  // ❌ Log error
-  console.warn('⚠️ Cart count element (.cart-count) not found in DOM.');
-}
-
-
-          // Hide message after 3 seconds
+          // Hide success message after 3 seconds
           setTimeout(() => {
             successMessage.style.display = 'none';
           }, 3000);
@@ -203,6 +199,7 @@ if (cartCount) {
     });
   });
 </script>
+
 
 
 
