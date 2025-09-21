@@ -174,7 +174,7 @@
           const cart = await fetch('/cart.js').then(res => res.json());
 
           // ✅ Update cart bubble in header
-          const cartCount = document.querySelector('.cart-count-bubble');
+          const cartCount = document.querySelector('sup');
           if (cartCount) {
             cartCount.textContent = cart.item_count;
             cartCount.style.display = cart.item_count > 0 ? 'inline-block' : 'none';
