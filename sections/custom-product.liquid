@@ -168,19 +168,27 @@
         });
 
         if (response.ok) {
+          // Reset quantity (optional)
+          form.querySelector('[name="quantity"]').value = 1;
+
+          // Show success message
           successMessage.style.display = 'block';
+
+          // Hide after 3 seconds
           setTimeout(() => {
             successMessage.style.display = 'none';
           }, 3000);
         } else {
-          alert('Could not add item to cart.');
+          alert('Failed to add item.');
         }
-      } catch (error) {
-        console.error('AJAX Add to Cart error:', error);
+      } catch (err) {
+        console.error('AJAX error:', err);
+        alert('Error adding to cart.');
       }
     });
   });
 </script>
+
 
 {% schema %}
 {
