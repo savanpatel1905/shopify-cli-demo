@@ -146,6 +146,7 @@
   }
 </style>
 
+ 
  <script>
   document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('{{ product_form_id }}');
@@ -170,23 +171,22 @@
         if (response.ok) {
           console.log('✅ Product added to cart via AJAX.');
 
-          // Show success message
           successMessage.style.display = 'block';
 
-          // Get latest cart
+          // Fetch latest cart
           const cart = await fetch('/cart.js').then(res => res.json());
 
-          // Update cart count
-         const cartCount = document.querySelector('.cart-count-badge'); // 👈 UPDATE THIS
-if (cartCount) {
-  cartCount.textContent = cart.item_count;
-  cartCount.style.display = 'inline-block';
-  console.log(`🛒 Cart count updated: ${cart.item_count}`);
-} else {
-  console.warn('⚠️ .cart-count-badge element not found in DOM.');
-}
+          // ✅ CHANGE THIS TO YOUR ACTUAL CLASS/ID
+          const cartCount = document.querySelector('.cart-count');
 
-          // Hide success message after 3 seconds
+          if (cartCount) {
+            cartCount.textContent = cart.item_count;
+            cartCount.style.display = 'inline-block';
+            console.log(`🛒 Cart count updated: ${cart.item_count}`);
+          } else {
+            console.warn('⚠️ Cart count element not found. Update the selector.');
+          }
+
           setTimeout(() => {
             successMessage.style.display = 'none';
           }, 3000);
