@@ -1,0 +1,123 @@
+{% schema %}
+{
+  "name": "Custom Product Section",
+  "tag": "section",
+  "class": "custom-product",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Custom Product"
+    }
+  ]
+}
+{% endschema %}
+
+<section class="product" itemscope itemtype="http://schema.org/Product">
+  <div class="product-wrapper">
+    <!-- Image -->
+    {% if product.featured_image %}
+      <div class="product-image">
+        <img src="{{ product.featured_image | img_url: 'large' }}" alt="{{ product.title }}" itemprop="image">
+      </div>
+    {% endif %}
+
+    <!-- Details -->
+    <div class="product-info">
+      <h1 itemprop="name">{{ product.title }}</h1>
+
+      <div class="product-price" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+        <meta itemprop="priceCurrency" content="{{ cart.currency.iso_code }}">
+        <span itemprop="price">{{ product.price | money }}</span>
+      </div>
+
+      <div class="product-description" itemprop="description">
+        {{ product.description }}
+      </div>
+
+      <!-- Add to Cart -->
+      <form id="add-to-cart-form" class="product-form" method="post">
+        <input type="hidden" name="id" value="{{ product.variants.first.id }}">
+
+        <label for="quantity">Quantity:</label>
+        <input type="number" id="quantity" name="quantity" min="1" value="1" required aria-label="Quantity">
+
+        <button type="submit" class="btn">Add to Cart</button>
+
+        <div id="cart-success-message" class="cart-message" role="status" aria-live="polite" style="display: none;">
+          ✅ Item added successfully!
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<style>
+  .product-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding: 2rem;
+  }
+
+  .product-image img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  .product-info h1 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  .product-form {
+    margin-top: 1.5rem;
+  }
+
+  .cart-message {
+    color: green;
+    margin-top: 1rem;
+    font-weight: bold;
+  }
+
+  @media (min-width: 768px) {
+    .product-wrapper {
+      flex-direction: row;
+    }
+    .product-image, .product-info {
+      flex: 1;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('add-to-cart-form');
+    const message = document.getElementById('cart-success-message');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(form);
+
+      try {
+        const response = await fetch('/cart/add.js', {
+          method: 'POST',
+          body: formData,
+          headers: {
+            'Accept': 'application/json',
+          },
+        });
+
+        if (!response.ok) throw new Error('Add to cart failed');
+
+        message.style.display = 'block';
+        setTimeout(() => {
+          message.style.display = 'none';
+        }, 3000);
+      } catch (err) {
+        alert('Something went wrong. Try again.');
+        console.error(err);
+      }
+    });
+  });
+</script>
