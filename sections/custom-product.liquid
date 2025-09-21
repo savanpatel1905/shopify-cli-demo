@@ -176,11 +176,19 @@
           const cart = await fetch('/cart.js').then(res => res.json());
 
           // Update cart count
-          const cartCount = document.querySelector('.cart-count'); // update selector as needed
-          if (cartCount) {
-            cartCount.textContent = cart.item_count;
-            cartCount.style.display = cart.item_count > 0 ? 'inline-block' : 'none';
-          }
+         const cartCount = document.querySelector('.cart-count'); // update selector as needed
+
+if (cartCount) {
+  cartCount.textContent = cart.item_count;
+  cartCount.style.display = cart.item_count > 0 ? 'inline-block' : 'none';
+
+  // ✅ Log success
+  console.log(`🛒 Cart count updated: ${cart.item_count}`);
+} else {
+  // ❌ Log error
+  console.warn('⚠️ Cart count element (.cart-count) not found in DOM.');
+}
+
 
           // Hide message after 3 seconds
           setTimeout(() => {
